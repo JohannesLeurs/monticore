@@ -62,6 +62,8 @@ public class SymbolTableConstants {
 
   public static final String IMPORT_STATEMENT = "de.monticore.symboltable.ImportStatement";
 
+  public static final String STRING = "java.lang.String";
+
   public static final String PATH = "java.nio.file.Path";
 
   public static final String I_SCOPE_SPANNING_SYMBOL = "de.monticore.symboltable.IScopeSpanningSymbol";
@@ -119,6 +121,8 @@ public class SymbolTableConstants {
   public static final String SCOPE_VAR = "scope";
 
   public static final String MODIFIER_VAR = "modifier";
+
+  public static final String STEREOTYPES_VAR = "stereotypes";
 
   public static final String SCOPE_STACK_VAR = "scopeStack";
 

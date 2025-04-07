@@ -85,4 +85,8 @@ public interface ISymbol {
     visitor.handle(this);
   }
 
+  /**
+   * @return The stereotypes of this symbol
+   */
+  List<String> getStereotypesList();
 }

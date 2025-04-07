@@ -33,6 +33,7 @@ import static de.monticore.cd.facade.CDModifier.PROTECTED;
 import static de.monticore.cd.facade.CDModifier.PUBLIC;
 import static de.monticore.codegen.cd2java.DecoratorAssert.assertBoolean;
 import static de.monticore.codegen.cd2java.DecoratorAssert.assertDeepEquals;
+import static de.monticore.codegen.cd2java.DecoratorAssert.assertInt;
 import static de.monticore.codegen.cd2java.DecoratorAssert.assertListOf;
 import static de.monticore.codegen.cd2java.DecoratorAssert.assertOptionalOf;
 import static de.monticore.codegen.cd2java.DecoratorTestUtil.getAttributeBy;
@@ -64,6 +65,8 @@ public class SymbolDecoratorTest extends DecoratorTestCase {
   private static final String A_NODE_TYPE = "de.monticore.codegen.symboltable.automatonsymbolcd._ast.ASTAutomaton";
 
   private static final String ACCESS_MODIFIER_TYPE = "de.monticore.symboltable.modifiers.AccessModifier";
+
+  private static final String STEREOTYPES_COMPONENT_TYPE = "java.lang.String";
 
   private static final String I_AUTOMATON_SCOPE = "de.monticore.codegen.symboltable.automatonsymbolcd._symboltable.IAutomatonSymbolCDScope";
 
@@ -158,7 +161,7 @@ public class SymbolDecoratorTest extends DecoratorTestCase {
 
   @Test
   public void testAttributeCount() {
-    assertEquals(7, symbolClassAutomaton.getCDAttributeList().size());
+    assertEquals(8, symbolClassAutomaton.getCDAttributeList().size());
   
     assertTrue(Log.getFindings().isEmpty());
   }
@@ -217,6 +220,15 @@ public class SymbolDecoratorTest extends DecoratorTestCase {
   }
 
   @Test
+  public void testStereotypesAttribute() {
+    ASTCDAttribute astcdAttribute = getAttributeBy("stereotypes", symbolClassAutomaton);
+    assertDeepEquals(PROTECTED, astcdAttribute.getModifier());
+    assertDeepEquals(mcTypeFacade.createListTypeOf(STEREOTYPES_COMPONENT_TYPE), astcdAttribute.getMCType());
+
+    assertTrue(Log.getFindings().isEmpty());
+  }
+
+  @Test
   public void testSpannedScopeAttribute() {
     ASTCDAttribute astcdAttribute = getAttributeBy("spannedScope", symbolClassAutomaton);
     assertDeepEquals(PROTECTED, astcdAttribute.getModifier());
@@ -244,7 +256,7 @@ public class SymbolDecoratorTest extends DecoratorTestCase {
 
   @Test
   public void testMethods() {
-    assertEquals(21, symbolClassAutomaton.getCDMethodList().size());
+    assertEquals(55, symbolClassAutomaton.getCDMethodList().size());
   }
 
   @Test
@@ -399,6 +411,546 @@ public class SymbolDecoratorTest extends DecoratorTestCase {
   }
 
   @Test
+  public void testGetStereotypesListMethod() {
+    ASTCDMethod method = getMethodBy("getStereotypesList", symbolClassAutomaton);
+
+    assertDeepEquals(PUBLIC, method.getModifier());
+    assertDeepEquals(
+      mcTypeFacade.createListTypeOf(STEREOTYPES_COMPONENT_TYPE),
+      method.getMCReturnType().getMCType()
+    );
+
+    assertTrue(method.isEmptyCDParameters());
+
+    assertTrue(Log.getFindings().isEmpty());
+  }
+
+  @Test
+  public void testContainsStereotypesMethod() {
+    ASTCDMethod method = getMethodBy("containsStereotypes", symbolClassAutomaton);
+
+    assertDeepEquals(PUBLIC, method.getModifier());
+    assertBoolean(method.getMCReturnType().getMCType());
+
+    assertEquals(1, method.sizeCDParameters());
+    assertDeepEquals(Object.class, method.getCDParameter(0).getMCType());
+    assertEquals("element", method.getCDParameter(0).getName());
+
+    assertTrue(Log.getFindings().isEmpty());
+  }
+
+  @Test
+  public void testContainsAllStereotypesMethod() {
+    ASTCDMethod method = getMethodBy("containsAllStereotypes", symbolClassAutomaton);
+
+    assertDeepEquals(PUBLIC, method.getModifier());
+    assertBoolean(method.getMCReturnType().getMCType());
+
+    assertEquals(1, method.sizeCDParameters());
+    assertDeepEquals(
+      mcTypeFacade.createCollectionTypeOf("?"),
+      method.getCDParameter(0).getMCType()
+    );
+    assertEquals("collection", method.getCDParameter(0).getName());
+
+    assertTrue(Log.getFindings().isEmpty());
+  }
+
+  @Test
+  public void testIsEmptyStereotypesMethod() {
+    ASTCDMethod method = getMethodBy("isEmptyStereotypes", symbolClassAutomaton);
+
+    assertDeepEquals(PUBLIC, method.getModifier());
+    assertBoolean(method.getMCReturnType().getMCType());
+
+    assertTrue(method.isEmptyCDParameters());
+
+    assertTrue(Log.getFindings().isEmpty());
+  }
+
+  @Test
+  public void testIteratorStereotypesMethod() {
+    ASTCDMethod method = getMethodBy("iteratorStereotypes", symbolClassAutomaton);
+
+    assertDeepEquals(PUBLIC, method.getModifier());
+    assertDeepEquals(
+      mcTypeFacade.createBasicGenericTypeOf("Iterator", STEREOTYPES_COMPONENT_TYPE),
+      method.getMCReturnType().getMCType()
+    );
+
+    assertTrue(method.isEmptyCDParameters());
+
+    assertTrue(Log.getFindings().isEmpty());
+  }
+
+  @Test
+  public void testSizeStereotypesMethod() {
+    ASTCDMethod method = getMethodBy("sizeStereotypes", symbolClassAutomaton);
+
+    assertDeepEquals(PUBLIC, method.getModifier());
+    assertInt(method.getMCReturnType().getMCType());
+
+    assertTrue(method.isEmptyCDParameters());
+
+    assertTrue(Log.getFindings().isEmpty());
+  }
+
+  @Test
+  public void testToArrayStereotypesWithInitializerMethod() {
+    ASTCDMethod method = getMethodBy("toArrayStereotypes", 1, symbolClassAutomaton);
+
+    assertDeepEquals(PUBLIC, method.getModifier());
+    assertDeepEquals(
+      mcTypeFacade.createArrayType(STEREOTYPES_COMPONENT_TYPE, 1),
+      method.getMCReturnType().getMCType()
+    );
+
+    assertDeepEquals(
+      mcTypeFacade.createArrayType(STEREOTYPES_COMPONENT_TYPE, 1),
+      method.getCDParameter(0).getMCType()
+    );
+    assertEquals("array", method.getCDParameter(0).getName());
+
+    assertTrue(Log.getFindings().isEmpty());
+  }
+
+  @Test
+  public void testToArrayStereotypesMethod() {
+    ASTCDMethod method = getMethodBy("toArrayStereotypes", 0, symbolClassAutomaton);
+
+    assertDeepEquals(PUBLIC, method.getModifier());
+    assertDeepEquals(
+      mcTypeFacade.createArrayType("Object", 1),
+      method.getMCReturnType().getMCType()
+    );
+
+    assertTrue(Log.getFindings().isEmpty());
+  }
+
+  @Test
+  public void testSpliteratorStereotypesMethod() {
+    ASTCDMethod method = getMethodBy("spliteratorStereotypes", symbolClassAutomaton);
+
+    assertDeepEquals(PUBLIC, method.getModifier());
+    assertDeepEquals(
+      mcTypeFacade.createBasicGenericTypeOf("Spliterator", STEREOTYPES_COMPONENT_TYPE),
+      method.getMCReturnType().getMCType()
+    );
+
+    assertTrue(method.isEmptyCDParameters());
+
+    assertTrue(Log.getFindings().isEmpty());
+  }
+
+  @Test
+  public void testStreamStereotypesMethod() {
+    ASTCDMethod method = getMethodBy("streamStereotypes", symbolClassAutomaton);
+
+    assertDeepEquals(PUBLIC, method.getModifier());
+    assertDeepEquals(
+      mcTypeFacade.createBasicGenericTypeOf("Stream", STEREOTYPES_COMPONENT_TYPE),
+      method.getMCReturnType().getMCType()
+    );
+
+    assertTrue(method.isEmptyCDParameters());
+
+    assertTrue(Log.getFindings().isEmpty());
+  }
+
+  @Test
+  public void testParallelStreamStereotypesMethod() {
+    ASTCDMethod method = getMethodBy("parallelStreamStereotypes", symbolClassAutomaton);
+
+    assertDeepEquals(PUBLIC, method.getModifier());
+    assertDeepEquals(
+      mcTypeFacade.createBasicGenericTypeOf("Stream", STEREOTYPES_COMPONENT_TYPE),
+      method.getMCReturnType().getMCType()
+    );
+
+    assertTrue(method.isEmptyCDParameters());
+
+    assertTrue(Log.getFindings().isEmpty());
+  }
+
+  @Test
+  public void testGetStereotypesAtIndexMethod() {
+    ASTCDMethod method = getMethodBy("getStereotypes", symbolClassAutomaton);
+
+    assertDeepEquals(PUBLIC, method.getModifier());
+    assertDeepEquals(
+      mcTypeFacade.createQualifiedType(STEREOTYPES_COMPONENT_TYPE),
+      method.getMCReturnType().getMCType()
+    );
+
+    assertEquals(1, method.sizeCDParameters());
+    assertInt(method.getCDParameter(0).getMCType());
+    assertEquals("index", method.getCDParameter(0).getName());
+
+    assertTrue(Log.getFindings().isEmpty());
+  }
+
+  @Test
+  public void testIndexOfStereotypesMethod() {
+    ASTCDMethod method = getMethodBy("indexOfStereotypes", symbolClassAutomaton);
+
+    assertDeepEquals(PUBLIC, method.getModifier());
+    assertInt(method.getMCReturnType().getMCType());
+
+    assertEquals(1, method.sizeCDParameters());
+    assertDeepEquals(Object.class, method.getCDParameter(0).getMCType());
+    assertEquals("element", method.getCDParameter(0).getName());
+
+    assertTrue(Log.getFindings().isEmpty());
+  }
+
+  @Test
+  public void testLastIndexOfStereotypesMethod() {
+    ASTCDMethod method = getMethodBy("lastIndexOfStereotypes", symbolClassAutomaton);
+
+    assertDeepEquals(PUBLIC, method.getModifier());
+    assertInt(method.getMCReturnType().getMCType());
+
+    assertEquals(1, method.sizeCDParameters());
+    assertDeepEquals(Object.class, method.getCDParameter(0).getMCType());
+    assertEquals("element", method.getCDParameter(0).getName());
+
+    assertTrue(Log.getFindings().isEmpty());
+  }
+
+  @Test
+  public void testEqualsStereotypesMethod() {
+    ASTCDMethod method = getMethodBy("equalsStereotypes", symbolClassAutomaton);
+
+    assertDeepEquals(PUBLIC, method.getModifier());
+    assertBoolean(method.getMCReturnType().getMCType());
+
+    assertEquals(1, method.sizeCDParameters());
+    assertDeepEquals(Object.class, method.getCDParameter(0).getMCType());
+    assertEquals("o", method.getCDParameter(0).getName());
+
+    assertTrue(Log.getFindings().isEmpty());
+  }
+
+  @Test
+  public void testHashCodeStereotypesMethod() {
+    ASTCDMethod method = getMethodBy("hashCodeStereotypes", symbolClassAutomaton);
+
+    assertDeepEquals(PUBLIC, method.getModifier());
+    assertInt(method.getMCReturnType().getMCType());
+
+    assertTrue(method.isEmptyCDParameters());
+
+    assertTrue(Log.getFindings().isEmpty());
+  }
+
+  @Test
+  public void testListIteratorStereotypesMethod() {
+    ASTCDMethod method = getMethodBy("listIteratorStereotypes", 0, symbolClassAutomaton);
+
+    assertDeepEquals(PUBLIC, method.getModifier());
+    assertDeepEquals(
+      mcTypeFacade.createBasicGenericTypeOf("ListIterator", STEREOTYPES_COMPONENT_TYPE),
+      method.getMCReturnType().getMCType()
+    );
+
+    assertTrue(Log.getFindings().isEmpty());
+  }
+
+  @Test
+  public void testListIteratorStereotypesByIndexMethod() {
+    ASTCDMethod method = getMethodBy("listIteratorStereotypes", 1, symbolClassAutomaton);
+
+    assertDeepEquals(PUBLIC, method.getModifier());
+    assertDeepEquals(
+      mcTypeFacade.createBasicGenericTypeOf("ListIterator", STEREOTYPES_COMPONENT_TYPE),
+      method.getMCReturnType().getMCType()
+    );
+
+    assertInt(method.getCDParameter(0).getMCType());
+    assertEquals("index", method.getCDParameter(0).getName());
+
+    assertTrue(Log.getFindings().isEmpty());
+  }
+
+  @Test
+  public void testSubListStereotypesMethod() {
+    ASTCDMethod method = getMethodBy("subListStereotypes", symbolClassAutomaton);
+
+    assertDeepEquals(PUBLIC, method.getModifier());
+    assertDeepEquals(
+      mcTypeFacade.createListTypeOf(STEREOTYPES_COMPONENT_TYPE),
+      method.getMCReturnType().getMCType()
+    );
+
+    assertEquals(2, method.sizeCDParameters());
+    assertInt(method.getCDParameter(0).getMCType());
+    assertInt(method.getCDParameter(1).getMCType());
+    assertEquals("start", method.getCDParameter(0).getName());
+    assertEquals("end", method.getCDParameter(1).getName());
+
+    assertTrue(Log.getFindings().isEmpty());
+  }
+
+  @Test
+  public void testSetListStereotypesMethod() {
+    ASTCDMethod method = getMethodBy("setStereotypesList", symbolClassAutomaton);
+    System.out.println("Type: " + method.getMCReturnType().printType());
+    assertDeepEquals(PUBLIC, method.getModifier());
+    assertTrue(method.getMCReturnType().isPresentMCVoidType());
+
+    assertEquals(1, method.sizeCDParameters());
+    assertDeepEquals(
+      mcTypeFacade.createListTypeOf(STEREOTYPES_COMPONENT_TYPE),
+      method.getCDParameter(0).getMCType()
+    );
+    assertEquals("stereotypes", method.getCDParameter(0).getName());
+
+    assertTrue(Log.getFindings().isEmpty());
+  }
+
+  @Test
+  public void testClearStereotypesMethod() {
+    ASTCDMethod method = getMethodBy("clearStereotypes", symbolClassAutomaton);
+
+    assertDeepEquals(PUBLIC, method.getModifier());
+    assertTrue(method.getMCReturnType().isPresentMCVoidType());
+
+    assertTrue(method.isEmptyCDParameters());
+
+    assertTrue(Log.getFindings().isEmpty());
+  }
+
+  @Test
+  public void testAddStereotypesMethod() {
+    ASTCDMethod method = getMethodBy("addStereotypes", 1, symbolClassAutomaton);
+
+    assertDeepEquals(PUBLIC, method.getModifier());
+    assertBoolean(method.getMCReturnType().getMCType());
+
+    assertDeepEquals(
+      mcTypeFacade.createQualifiedType(STEREOTYPES_COMPONENT_TYPE),
+      method.getCDParameter(0).getMCType()
+    );
+    assertEquals("element", method.getCDParameter(0).getName());
+
+    assertTrue(Log.getFindings().isEmpty());
+  }
+
+  @Test
+  public void testAddAllStereotypesMethod() {
+    ASTCDMethod method = getMethodBy("addAllStereotypes", 1, symbolClassAutomaton);
+
+    assertDeepEquals(PUBLIC, method.getModifier());
+    assertBoolean(method.getMCReturnType().getMCType());
+
+    assertDeepEquals(
+      mcTypeFacade.createCollectionTypeOf("? extends " + STEREOTYPES_COMPONENT_TYPE),
+      method.getCDParameter(0).getMCType()
+    );
+    assertEquals("collection", method.getCDParameter(0).getName());
+
+    assertTrue(Log.getFindings().isEmpty());
+  }
+
+  @Test
+  public void testRemoveStereotypesMethod() {
+    List<ASTCDMethod> methods = getMethodsBy("removeStereotypes", symbolClassAutomaton);
+    List<ASTCDMethod> removeObjMethods = methods.stream()
+      .filter(m -> m.getCDParameter(0).getMCType().deepEquals(mcTypeFacade.createQualifiedType("Object")))
+      .collect(Collectors.toList());
+
+    assertEquals(1, removeObjMethods.size());
+    assertDeepEquals(PUBLIC, removeObjMethods.get(0).getModifier());
+    assertBoolean(removeObjMethods.get(0).getMCReturnType().getMCType());
+
+    assertEquals(1, removeObjMethods.get(0).sizeCDParameters());
+    assertEquals("element", removeObjMethods.get(0).getCDParameter(0).getName());
+
+    assertTrue(Log.getFindings().isEmpty());
+  }
+
+  @Test
+  public void testRemoveAllStereotypesMethod() {
+    ASTCDMethod method = getMethodBy("removeAllStereotypes", symbolClassAutomaton);
+
+    assertDeepEquals(PUBLIC, method.getModifier());
+    assertBoolean(method.getMCReturnType().getMCType());
+
+    assertEquals(1, method.sizeCDParameters());
+    assertDeepEquals(
+      mcTypeFacade.createCollectionTypeOf("?"),
+      method.getCDParameter(0).getMCType()
+    );
+    assertEquals("collection", method.getCDParameter(0).getName());
+
+    assertTrue(Log.getFindings().isEmpty());
+  }
+
+  @Test
+  public void testRetainAllStereotypesMethod() {
+    ASTCDMethod method = getMethodBy("retainAllStereotypes", symbolClassAutomaton);
+
+    assertDeepEquals(PUBLIC, method.getModifier());
+    assertBoolean(method.getMCReturnType().getMCType());
+
+    assertEquals(1, method.sizeCDParameters());
+    assertDeepEquals(
+      mcTypeFacade.createCollectionTypeOf("?"),
+      method.getCDParameter(0).getMCType()
+    );
+    assertEquals("collection", method.getCDParameter(0).getName());
+
+    assertTrue(Log.getFindings().isEmpty());
+  }
+
+  @Test
+  public void testRemoveIfStereotypesMethod() {
+    ASTCDMethod method = getMethodBy("removeIfStereotypes", symbolClassAutomaton);
+
+    assertDeepEquals(PUBLIC, method.getModifier());
+    assertBoolean(method.getMCReturnType().getMCType());
+
+    assertEquals(1, method.sizeCDParameters());
+    assertDeepEquals(
+      mcTypeFacade.createBasicGenericTypeOf("Predicate", "? super " + STEREOTYPES_COMPONENT_TYPE),
+      method.getCDParameter(0).getMCType()
+    );
+    assertEquals("filter", method.getCDParameter(0).getName());
+
+    assertTrue(Log.getFindings().isEmpty());
+  }
+
+  @Test
+  public void testForEachStereotypesMethod() {
+    ASTCDMethod method = getMethodBy("forEachStereotypes", symbolClassAutomaton);
+
+    assertDeepEquals(PUBLIC, method.getModifier());
+    assertTrue(method.getMCReturnType().isPresentMCVoidType());
+
+    assertEquals(1, method.sizeCDParameters());
+    assertDeepEquals(
+      mcTypeFacade.createBasicGenericTypeOf("Consumer", "? super " + STEREOTYPES_COMPONENT_TYPE),
+      method.getCDParameter(0).getMCType()
+    );
+    assertEquals("action", method.getCDParameter(0).getName());
+
+    assertTrue(Log.getFindings().isEmpty());
+  }
+
+  @Test
+  public void testAddStereotypesAtIndexMethod() {
+    ASTCDMethod method = getMethodBy("addStereotypes", 2, symbolClassAutomaton);
+
+    assertDeepEquals(PUBLIC, method.getModifier());
+    assertTrue(method.getMCReturnType().isPresentMCVoidType());
+
+    assertInt(method.getCDParameter(0).getMCType());
+    assertEquals("index", method.getCDParameter(0).getName());
+    assertDeepEquals(
+      STEREOTYPES_COMPONENT_TYPE,
+      method.getCDParameter(1).getMCType()
+    );
+    assertEquals("element", method.getCDParameter(1).getName());
+
+    assertTrue(Log.getFindings().isEmpty());
+  }
+
+  @Test
+  public void testAddAllStereotypesAtIndexMethod() {
+    ASTCDMethod method = getMethodBy("addAllStereotypes", 2, symbolClassAutomaton);
+
+    assertDeepEquals(PUBLIC, method.getModifier());
+    assertBoolean(method.getMCReturnType().getMCType());
+
+    assertInt(method.getCDParameter(0).getMCType());
+    assertEquals("index", method.getCDParameter(0).getName());
+    assertDeepEquals(
+      mcTypeFacade.createCollectionTypeOf("? extends " + STEREOTYPES_COMPONENT_TYPE),
+      method.getCDParameter(1).getMCType()
+    );
+    assertEquals("collection", method.getCDParameter(1).getName());
+
+    assertTrue(Log.getFindings().isEmpty());
+  }
+
+  @Test
+  public void testRemoveStereotypesAtIndexMethod() {
+    List<ASTCDMethod> methods = getMethodsBy("removeStereotypes", symbolClassAutomaton);
+    List<ASTCDMethod> removeByIndexMethods = methods.stream()
+      .filter(m -> m.getCDParameter(0).getMCType().deepEquals(mcTypeFacade.createIntType()))
+      .collect(Collectors.toList());
+
+    assertEquals(1, removeByIndexMethods.size());
+    assertDeepEquals(PUBLIC, removeByIndexMethods.get(0).getModifier());
+    assertDeepEquals(
+      mcTypeFacade.createQualifiedType(STEREOTYPES_COMPONENT_TYPE),
+      removeByIndexMethods.get(0).getMCReturnType().getMCType()
+    );
+
+    assertEquals(1, removeByIndexMethods.get(0).sizeCDParameters());
+    assertInt(removeByIndexMethods.get(0).getCDParameter(0).getMCType());
+    assertEquals("index", removeByIndexMethods.get(0).getCDParameter(0).getName());
+
+    assertTrue(Log.getFindings().isEmpty());
+  }
+
+  @Test
+  public void testSetStereotypesMethod() {
+    ASTCDMethod method = getMethodBy("setStereotypes", symbolClassAutomaton);
+
+    assertDeepEquals(PUBLIC, method.getModifier());
+    assertDeepEquals(
+      mcTypeFacade.createQualifiedType(STEREOTYPES_COMPONENT_TYPE),
+      method.getMCReturnType().getMCType()
+    );
+
+    assertEquals(2, method.sizeCDParameters());
+    assertInt(method.getCDParameter(0).getMCType());
+    assertEquals("index", method.getCDParameter(0).getName());
+    assertDeepEquals(
+      mcTypeFacade.createQualifiedType(STEREOTYPES_COMPONENT_TYPE),
+      method.getCDParameter(1).getMCType()
+    );
+    assertEquals("element", method.getCDParameter(1).getName());
+
+    assertTrue(Log.getFindings().isEmpty());
+  }
+
+  @Test
+  public void testReplaceAllStereotypesMethod() {
+    ASTCDMethod method = getMethodBy("replaceAllStereotypes", symbolClassAutomaton);
+
+    assertDeepEquals(PUBLIC, method.getModifier());
+    assertTrue(method.getMCReturnType().isPresentMCVoidType());
+
+    assertEquals(1, method.sizeCDParameters());
+    assertDeepEquals(
+      mcTypeFacade.createBasicGenericTypeOf("UnaryOperator", STEREOTYPES_COMPONENT_TYPE),
+      method.getCDParameter(0).getMCType()
+    );
+    assertEquals("operator", method.getCDParameter(0).getName());
+
+    assertTrue(Log.getFindings().isEmpty());
+  }
+
+  @Test
+  public void testSortStereotypesMethod() {
+    ASTCDMethod method = getMethodBy("sortStereotypes", symbolClassAutomaton);
+
+    assertDeepEquals(PUBLIC, method.getModifier());
+    assertTrue(method.getMCReturnType().isPresentMCVoidType());
+
+    assertEquals(1, method.sizeCDParameters());
+    assertDeepEquals(
+      mcTypeFacade.createBasicGenericTypeOf("Comparator", "? super " + STEREOTYPES_COMPONENT_TYPE),
+      method.getCDParameter(0).getMCType()
+    );
+    assertEquals("comparator", method.getCDParameter(0).getName());
+
+    assertTrue(Log.getFindings().isEmpty());
+  }
+
+  @Test
   public void testSetNameMethod() {
     ASTCDMethod method = getMethodBy("setName", symbolClassAutomaton);
     assertDeepEquals(PUBLIC, method.getModifier());
@@ -545,7 +1097,7 @@ public class SymbolDecoratorTest extends DecoratorTestCase {
 
   @Test
   public void testAttributeCountStateSymbol() {
-    assertEquals(6, symbolClassState.getCDAttributeList().size());
+    assertEquals(7, symbolClassState.getCDAttributeList().size());
   
     assertTrue(Log.getFindings().isEmpty());
   }
@@ -559,7 +1111,7 @@ public class SymbolDecoratorTest extends DecoratorTestCase {
 
   @Test
   public void testMethodsStateSymbol() {
-    assertEquals(19, symbolClassState.getCDMethodList().size());
+    assertEquals(53, symbolClassState.getCDMethodList().size());
   
     assertTrue(Log.getFindings().isEmpty());
   }

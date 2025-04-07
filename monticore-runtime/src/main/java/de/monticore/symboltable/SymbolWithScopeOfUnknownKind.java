@@ -24,6 +24,8 @@ public class SymbolWithScopeOfUnknownKind implements IScopeSpanningSymbol {
 
   protected IScope spannedScope;
 
+  protected List<String> stereotypes = new ArrayList<>();
+
   public SymbolWithScopeOfUnknownKind(String name) {
     this.name = name;
   }
@@ -177,4 +179,8 @@ public class SymbolWithScopeOfUnknownKind implements IScopeSpanningSymbol {
     }
   }
 
+  @Override
+  public List<String> getStereotypesList() {
+    return this.stereotypes;
+  }
 }

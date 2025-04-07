@@ -218,7 +218,10 @@ public class SymbolDecorator extends AbstractCreator<ASTCDClass, ASTCDClass> {
     ASTCDAttribute accessModifier = this.getCDAttributeFacade().createAttribute(PROTECTED.build(), ACCESS_MODIFIER, "accessModifier");
     this.replaceTemplate(VALUE, accessModifier, new StringHookPoint("= " + ACCESS_MODIFIER_ALL_INCLUSION));
 
-    return new ArrayList<>(Arrays.asList(name, enclosingScope, node, accessModifier));
+    ASTMCType listTypeOfStereotypes = getMCTypeFacade().createListTypeOf(STRING);
+    ASTCDAttribute stereotypes = this.getCDAttributeFacade().createAttribute(PROTECTED.build(), listTypeOfStereotypes, STEREOTYPES_VAR);
+
+    return new ArrayList<>(Arrays.asList(name, enclosingScope, node, accessModifier, stereotypes));
   }
 
   protected List<ASTCDAttribute> createSymbolNameAttributes() {
