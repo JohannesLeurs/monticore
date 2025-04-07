@@ -148,6 +148,12 @@ public class SymbolBuilderDecorator extends AbstractCreator<ASTCDClass, ASTCDCla
     attrs.add(this.getCDAttributeFacade().createAttribute(PROTECTED.build(),
             symbolTableService.getScopeInterfaceFullName(), ENCLOSING_SCOPE_VAR));
 
+    ASTMCType listTypeOfStereotypes = getMCTypeFacade().createListTypeOf(STRING);
+    ASTCDAttribute stereotypes = this.getCDAttributeFacade().createAttribute(
+      PROTECTED.build(), listTypeOfStereotypes, STEREOTYPES_VAR
+    );
+    attrs.add(stereotypes);
+
     return attrs;
   }
 
